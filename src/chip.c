@@ -60,7 +60,7 @@ void print_debug_info(Chip8* chip8)
 
         case 0xEE:
             // 0x00EE: Return from a subroutine
-            // Pop last addres from the stack
+            // Pop last address from the stack
             //  and set PC to it
             printf("Return from subroutine\n");
             break;
@@ -162,7 +162,7 @@ void chip8_execute(Chip8* chip8)
 
         case 0xEE:
             // 0x00EE: Return from a subroutine
-            // Pop last addres from the stack
+            // Pop last address from the stack
             //  and set PC to it
             chip8->PC = *--chip8->stack_ptr;
             break;
