@@ -242,6 +242,7 @@ void print_debug_info(Chip8* chip8)
             break;
         
         default:
+            printf("Not implemented or invalid opcode\n");
             break; // Not implemented or invalid opcode
         }
         break;
@@ -305,6 +306,7 @@ void print_debug_info(Chip8* chip8)
             break;
 
         default:
+            printf("Not implemented or invalid opcode\n");
             break; // Not implemented or invalid opcode
         }
         break;
