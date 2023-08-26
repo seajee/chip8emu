@@ -199,6 +199,11 @@ void print_debug_info(Chip8* chip8)
         printf("Set I to NNN (0x%04X)\n", chip8->inst.NNN);
         break;
 
+    case 0x0B:
+        // 0xBNNN: Jump to the address NNN plus V0
+        printf("Jump to the address NNN (0x%04X) plus V0 (0x%02X)\n", chip8->inst.NNN, chip8->V[0]);
+        break;
+
     case 0x0D:
         // 0xDXYN: Draw a sprite at coordinate (VX, VY)
         //  Read from memory location I.
@@ -379,6 +384,11 @@ void chip8_execute(Chip8* chip8)
     case 0x0A:
         // 0xANNN: Set I to the address NNN
         chip8->I = chip8->inst.NNN;
+        break;
+
+    case 0x0B:
+        // 0xBNNN: Jump to the address NNN plus V0
+        chip8->PC = chip8->inst.NNN + chip8->V[0];
         break;
 
     case 0x0D:
