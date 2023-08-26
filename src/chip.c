@@ -316,7 +316,7 @@ void print_debug_info(Chip8* chip8)
 }
 #endif
 
-void chip8_tick(Chip8* chip8)
+void chip8_execute(Chip8* chip8)
 {
     // Get next opcode from RAM
     chip8->inst.opcode = (chip8->ram[chip8->PC] << 8) | (chip8->ram[chip8->PC + 1]);
@@ -644,6 +644,20 @@ void chip8_tick(Chip8* chip8)
 
     default:
         break; // Not implemented or invalid opcode
+    }
+}
+
+void chip8_update_timers(Chip8* chip8)
+{
+    if (chip8->delay_timer > 0) {
+        chip8->delay_timer--;
+    }
+
+    if (chip8->sound_timer > 0) {
+        chip8->sound_timer--;
+        // TODO: Play sound
+    } else {
+        // TODO: Stop playing sound
     }
 }
 

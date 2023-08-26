@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
         // Emulate CHIP-8 instructions for this frame (60 Hz)
         for (uint32_t i = 0; i < CHIP_INST_PER_SECOND / FPS; ++i) {
-            chip8_tick(&emu.chip8);
+            chip8_execute(&emu.chip8);
         }
 
         // Get time after running instructions
@@ -45,6 +45,9 @@ int main(int argc, char** argv)
         // Clear and update the emulator screen
         emu_clear_screen(emu);
         emu_update_screen(emu);
+
+        // Update CHIP-8 timers
+        chip8_update_timers(&emu.chip8);
     }
 
     emu_cleanup(emu);
