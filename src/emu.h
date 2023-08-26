@@ -26,6 +26,8 @@ typedef struct Emulator
     Audio audio;
     EmulatorState state;
     Chip8 chip8;
+
+    const char* rom_file;
 } Emulator;
 
 bool emu_init(Emulator* emu, const char* rom_file);

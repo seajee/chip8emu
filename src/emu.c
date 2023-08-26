@@ -39,7 +39,9 @@ bool emu_init(Emulator* emu, const char* rom_file)
         return false;
     }
 
+    // Set emulator variables
     emu->state = STATE_RUNNING;
+    emu->rom_file = rom_file;
 
     return true;
 }
@@ -115,10 +117,12 @@ void emu_handle_events(Emulator* emu)
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
+                // Set emulator state to STATE_QUIT
                 emu->state = STATE_QUIT;
                 break;
-            
+
             case SDLK_SPACE:
+                // Switch emulator state between STATE_RUNNING and STATE_PAUSED
                 if (emu->state == STATE_RUNNING) {
                     emu->state = STATE_PAUSED;
                     puts("INFO: Emulator paused");
@@ -126,6 +130,11 @@ void emu_handle_events(Emulator* emu)
                     emu->state = STATE_RUNNING;
                     puts("INFO: Emulator resumed");
                 }
+                break;
+
+            case SDLK_RETURN:
+                // Reset CHIP-8
+                chip8_init(&emu->chip8, emu->rom_file);
                 break;
             
             // CHIP-8 Keypad | QWERTY Keyboard
