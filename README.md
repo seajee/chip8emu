@@ -1,6 +1,6 @@
 # CHIP-8 Emulator
 
-Yet another CHIP-8 emulator, based on @queso-fuego tutorial series.
+Yet another CHIP-8 emulator, based on @queso-fuego emulator.
 
 ## Build
 
