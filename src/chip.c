@@ -127,8 +127,15 @@ void print_debug_info(Chip8* chip8)
             break;
 
         case 0x1:
-            // 0x8XY1: Sets VX to VX bitwise or VY
-            printf("Set V%X (0x%02X) to V%X bitwise or V%X (0x%02X)\n",
+            // 0x8XY1: Sets VX to VX or VY (bitwise)
+            printf("Set V%X (0x%02X) to V%X or V%X (0x%02X) (bitwise)\n",
+                chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
+                chip8->inst.Y, chip8->V[chip8->inst.Y]);
+            break;
+
+        case 0x2:
+            // 0x8XY2: Sets VX to VX and VY (bitwise)
+            printf("Set V%X (0x%02X) to V%X and V%X (0x%02X) (bitwise)\n",
                 chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
@@ -257,8 +264,13 @@ void chip8_execute(Chip8* chip8)
             break;
 
         case 0x1:
-            // 0x8XY1: Sets VX to VX bitwise or VY
+            // 0x8XY1: Sets VX to VX or VY (bitwise)
             chip8->V[chip8->inst.X] |= chip8->V[chip8->inst.Y];
+            break;
+
+        case 0x2:
+            // 0x8XY2: Sets VX to VX and VY (bitwise)
+            chip8->V[chip8->inst.X] &= chip8->V[chip8->inst.Y];
             break;
 
         default:
