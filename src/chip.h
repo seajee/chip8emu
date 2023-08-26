@@ -48,7 +48,6 @@ typedef struct Chip8
 
 bool chip8_init(Chip8* chip8, const char* rom_path);
 void chip8_execute(Chip8* chip8);
-void chip8_update_timers(Chip8* chip8);
 
 #endif // _CHIP_H_
 

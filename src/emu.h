@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "chip.h"
+#include "audio.h"
 
 #define WINDOW_SCALE 15
 
@@ -22,6 +23,7 @@ typedef struct Emulator
     SDL_Window* window;
     SDL_Renderer* renderer;
 
+    Audio audio;
     EmulatorState state;
     Chip8 chip8;
 } Emulator;
@@ -31,6 +33,7 @@ void emu_cleanup(const Emulator emu);
 void emu_clear_screen(const Emulator emu);
 void emu_update_screen(const Emulator emu);
 void emu_handle_events(Emulator* emu);
+void emu_update_timers(Emulator* emu);
 
 #endif // _EMU_H_
 

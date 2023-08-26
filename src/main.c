@@ -46,8 +46,8 @@ int main(int argc, char** argv)
         emu_clear_screen(emu);
         emu_update_screen(emu);
 
-        // Update CHIP-8 timers
-        chip8_update_timers(&emu.chip8);
+        // Update emulator timers
+        emu_update_timers(&emu);
     }
 
     emu_cleanup(emu);

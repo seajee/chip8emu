@@ -4,6 +4,7 @@
 
 bool emu_init(Emulator* emu, const char* rom_file)
 {
+    // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
         SDL_Log("Could not initialize SDL: %s", SDL_GetError());
         return false;
@@ -27,12 +28,18 @@ bool emu_init(Emulator* emu, const char* rom_file)
         return false;
     }
 
-    emu->state = STATE_RUNNING;
-
+    // Initialize emulator components
     if (!chip8_init(&emu->chip8, rom_file)) {
         fprintf(stderr, "ERROR: Could not initialize CHIP-8\n");
         return false;
     }
+
+    if (!audio_init(&emu->audio)) {
+        fprintf(stderr, "ERROR: Could not initialize audio\n");
+        return false;
+    }
+
+    emu->state = STATE_RUNNING;
 
     return true;
 }
@@ -41,6 +48,7 @@ void emu_cleanup(const Emulator emu)
 {
     SDL_DestroyRenderer(emu.renderer);
     SDL_DestroyWindow(emu.window);
+    audio_cleanup(emu.audio);
     SDL_Quit();
 }
 
@@ -57,6 +65,7 @@ void emu_clear_screen(const Emulator emu)
 
 void emu_update_screen(const Emulator emu)
 {
+    // TODO: Make specific functions to contain SDL graphics
     SDL_Rect rect = { .x = 0, .y = 0, .w = WINDOW_SCALE, .h = WINDOW_SCALE };
 
     const uint8_t fg_r = (FOREGROUND_COLOR >> 24) & 0xFF;
@@ -180,6 +189,22 @@ void emu_handle_events(Emulator* emu)
         default:
             break;
         }
+    }
+}
+
+void emu_update_timers(Emulator* emu)
+{
+    Chip8* chip8 = &emu->chip8;
+
+    if (chip8->delay_timer > 0) {
+        chip8->delay_timer--;
+    }
+
+    if (chip8->sound_timer > 0) {
+        chip8->sound_timer--;
+        SDL_PauseAudioDevice(emu->audio.device, 0); // Play sound
+    } else {
+        SDL_PauseAudioDevice(emu->audio.device, 1); // Pause sound
     }
 }
 
