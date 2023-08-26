@@ -110,13 +110,13 @@ void emu_handle_events(Emulator* emu)
         switch (event.type) {
         case SDL_QUIT:
             emu->state = STATE_QUIT;
-            return;
+            break;
 
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:
                 emu->state = STATE_QUIT;
-                return;
+                break;
             
             case SDLK_SPACE:
                 if (emu->state == STATE_RUNNING) {
@@ -126,7 +126,7 @@ void emu_handle_events(Emulator* emu)
                     emu->state = STATE_RUNNING;
                     puts("INFO: Emulator resumed");
                 }
-                return;
+                break;
             
             // CHIP-8 Keypad | QWERTY Keyboard
             // 123C          | 1234
