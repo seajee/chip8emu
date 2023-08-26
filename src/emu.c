@@ -78,12 +78,16 @@ void emu_update_screen(const Emulator emu)
         if (emu.chip8.display[i]) {
             // If pixel is on, draw foreground color
             SDL_SetRenderDrawColor(emu.renderer, fg_r, fg_g, fg_b, fg_a);
+            SDL_RenderFillRect(emu.renderer, &rect);
+
+            // Draw pixel outlines
+            SDL_SetRenderDrawColor(emu.renderer, bg_r, bg_g, bg_b, bg_a);
+            SDL_RenderDrawRect(emu.renderer, &rect);
         } else {
             // If pixel is off, draw background color
             SDL_SetRenderDrawColor(emu.renderer, bg_r, bg_g, bg_b, bg_a);
+            SDL_RenderFillRect(emu.renderer, &rect);
         }
-
-        SDL_RenderFillRect(emu.renderer, &rect);
     }
 
     SDL_RenderPresent(emu.renderer);
