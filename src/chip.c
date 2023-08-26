@@ -64,7 +64,7 @@ void print_debug_info(Chip8* chip8)
             //  and set PC to it
             printf("Return from subroutine\n");
             break;
-        
+
         default:
             // Not implemented
             //   or 0x0NNN: Calls machine code routine at address NNN
@@ -73,7 +73,7 @@ void print_debug_info(Chip8* chip8)
             break;
         }
         break;
-    
+
     case 0x01:
         // 0x1NNN: Jump to address NNN
         printf("Jump to address NNN (0x%04X)\n", chip8->inst.NNN);
@@ -116,6 +116,23 @@ void print_debug_info(Chip8* chip8)
             chip8->inst.NN, chip8->inst.X, chip8->V[chip8->inst.X]);
         break;
 
+    case 0x08:
+        switch (chip8->inst.N) {
+        case 0x0:
+            // 0x8XY0: Set VX to the value of VY
+            chip8->V[chip8->inst.X] = chip8->V[chip8->inst.Y];
+            printf("Set V%X (0x%02X) to the value of V%X (0x%02X)\n",
+                chip8->inst.X, chip8->V[chip8->inst.X],
+                chip8->inst.Y, chip8->V[chip8->inst.Y]);
+            break;
+
+        default:
+            // Not implemented or bad opcode
+            printf("Not implemented or bad opcode\n");
+            break;
+        }
+        break;
+
     case 0x0A:
         // 0xANNN: Set I to the address NNN
         printf("Sets I to NNN (0x%04X)\n", chip8->inst.NNN);
@@ -133,7 +150,7 @@ void print_debug_info(Chip8* chip8)
         break;
 
     default:
-        printf("Not implemented\n");
+        printf("Not implemented or bad opcode\n");
         break; // Not implemented or invalid opcode
     }
 }
@@ -224,12 +241,25 @@ void chip8_execute(Chip8* chip8)
         // 0x7XNN: Adds NN to VX (carry flag is not changed)
         chip8->V[chip8->inst.X] += chip8->inst.NN;
         break;
-    
+
+    case 0x08:
+        switch (chip8->inst.N) {
+        case 0x0:
+            // 0x8XY0: Set VX to the value of VY
+            chip8->V[chip8->inst.X] = chip8->V[chip8->inst.Y];
+            break;
+
+        default:
+            // Not implemented or bad opcode
+            break;
+        }
+        break;
+
     case 0x0A:
         // 0xANNN: Set I to the address NNN
         chip8->I = chip8->inst.NNN;
         break;
-    
+
     case 0x0D:
         // 0xDXYN: Draw a sprite at coordinate (VX, VY)
         //  Read from memory location I.
