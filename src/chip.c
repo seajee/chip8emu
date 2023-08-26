@@ -147,6 +147,13 @@ void print_debug_info(Chip8* chip8)
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
+        case 0x4:
+            // 0x8XY4: Add VY to VX, set Carry flag
+            printf("Add V%X (0x%02X) to V%X (0x%02X), set Carry flag\n",
+                chip8->inst.X, chip8->V[chip8->inst.X],
+                chip8->inst.Y, chip8->V[chip8->inst.Y]);
+            break;
+
         default:
             // Not implemented or bad opcode
             printf("Not implemented or bad opcode\n");
@@ -283,6 +290,14 @@ void chip8_execute(Chip8* chip8)
         case 0x3:
             // 0x8XY3: Sets VX to VX xor VY
             chip8->V[chip8->inst.X] ^= chip8->V[chip8->inst.Y];
+            break;
+
+        case 0x4:
+            // 0x8XY4: Add VY to VX, set Carry flag
+            if ((uint16_t)(chip8->V[chip8->inst.X] + chip8->V[chip8->inst.Y]) > 255) {
+                chip8->V[0xF] = 1;
+            }
+            chip8->V[chip8->inst.X] += chip8->V[chip8->inst.Y];
             break;
 
         default:
