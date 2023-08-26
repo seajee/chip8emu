@@ -154,6 +154,13 @@ void print_debug_info(Chip8* chip8)
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
+        case 0x5:
+            // 0x8XY5: VY is subtracted from VX, set Carry flag
+            printf("V%X (0x%02X) is subtracted from V%X (0x%02X), set Carry flag\n",
+                chip8->inst.X, chip8->V[chip8->inst.Y],
+                chip8->inst.Y, chip8->V[chip8->inst.X]);
+            break;
+
         default:
             // Not implemented or bad opcode
             printf("Not implemented or bad opcode\n");
@@ -298,6 +305,14 @@ void chip8_execute(Chip8* chip8)
                 chip8->V[0xF] = 1;
             }
             chip8->V[chip8->inst.X] += chip8->V[chip8->inst.Y];
+            break;
+
+        case 0x5:
+            // 0x8XY5: VY is subtracted from VX, set Carry flag
+            if (chip8->V[chip8->inst.Y] > chip8->V[chip8->inst.X]) {
+                chip8->V[0xF] = 1;
+            }
+            chip8->V[chip8->inst.X] -= chip8->V[chip8->inst.Y];
             break;
 
         default:
