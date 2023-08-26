@@ -193,8 +193,8 @@ void print_debug_info(Chip8* chip8)
         break;
 
     case 0x09:
-        // 0x9XY0: Skips the next instruction if VX does not equal VY
-        printf("Skips the next instruction if V%X (%02X) does not equal V%X (%02X)\n",
+        // 0x9XY0: Skip the next instruction if VX does not equal VY
+        printf("Skip the next instruction if V%X (%02X) does not equal V%X (%02X)\n",
             chip8->inst.X, chip8->V[chip8->inst.X],
             chip8->inst.Y, chip8->V[chip8->inst.Y]);
         break;
@@ -225,6 +225,25 @@ void print_debug_info(Chip8* chip8)
             chip8->inst.N,
             chip8->inst.X, chip8->V[chip8->inst.X],
             chip8->inst.Y, chip8->V[chip8->inst.Y], chip8->I);
+        break;
+
+    case 0x0E:
+        switch (chip8->inst.NN) {
+        case 0x9E:
+            // 0xEX9E: Skip the next instruction if the key stored in VX is pressed
+            printf("Skip the next instruction if the key stored in V%X (0x%02X) is pressed\n",
+                chip8->inst.X, chip8->V[chip8->inst.X]);
+            break;
+        
+        case 0xA1:
+            // 0xEXA1: Skips the next instruction if the key stored in VX is not pressed
+            printf("Skip the next instruction if the key stored in V%X (0x%02X) is not pressed\n",
+                chip8->inst.X, chip8->V[chip8->inst.X]);
+            break;
+        
+        default:
+            break; // Not implemented or invalid opcode
+        }
         break;
 
     default:
@@ -387,7 +406,7 @@ void chip8_execute(Chip8* chip8)
         break;
 
     case 0x09:
-        // 0x9XY0: Skips the next instruction if VX does not equal VY
+        // 0x9XY0: Skip the next instruction if VX does not equal VY
         if (chip8->V[chip8->inst.X] != chip8->V[chip8->inst.Y]) {
             chip8->PC += 2;
         }
@@ -447,7 +466,27 @@ void chip8_execute(Chip8* chip8)
                 break;
             }
         }
+        break;
 
+    case 0x0E:
+        switch (chip8->inst.NN) {
+        case 0x9E:
+            // 0xEX9E: Skip the next instruction if the key stored in VX is pressed
+            if (chip8->keypad[chip8->V[chip8->inst.X]]) {
+                chip8->PC += 2;
+            }
+            break;
+        
+        case 0xA1:
+            // 0xEXA1: Skips the next instruction if the key stored in VX is not pressed
+            if (!chip8->keypad[chip8->V[chip8->inst.X]]) {
+                chip8->PC += 2;
+            }
+            break;
+        
+        default:
+            break; // Not implemented or invalid opcode
+        }
         break;
 
     default:

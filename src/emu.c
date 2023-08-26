@@ -118,6 +118,31 @@ void emu_handle_events(Emulator* emu)
                     puts("INFO: Emulator resumed");
                 }
                 return;
+            
+            // CHIP-8 Keypad | QWERTY Keyboard
+            // 123C          | 1234
+            // 456D          | QWER
+            // 789E          | ASDF
+            // A0BF          | ZXCV
+            case SDLK_1: emu->chip8.keypad[0x1] = true; break;
+            case SDLK_2: emu->chip8.keypad[0x2] = true; break;
+            case SDLK_3: emu->chip8.keypad[0x3] = true; break;
+            case SDLK_4: emu->chip8.keypad[0xC] = true; break;
+
+            case SDLK_q: emu->chip8.keypad[0x4] = true; break;
+            case SDLK_w: emu->chip8.keypad[0x5] = true; break;
+            case SDLK_e: emu->chip8.keypad[0x6] = true; break;
+            case SDLK_r: emu->chip8.keypad[0xD] = true; break;
+
+            case SDLK_a: emu->chip8.keypad[0x7] = true; break;
+            case SDLK_s: emu->chip8.keypad[0x8] = true; break;
+            case SDLK_d: emu->chip8.keypad[0x9] = true; break;
+            case SDLK_f: emu->chip8.keypad[0xE] = true; break;
+
+            case SDLK_z: emu->chip8.keypad[0xA] = true; break;
+            case SDLK_x: emu->chip8.keypad[0x0] = true; break;
+            case SDLK_c: emu->chip8.keypad[0xB] = true; break;
+            case SDLK_v: emu->chip8.keypad[0xF] = true; break;
 
             default:
                 break;
@@ -125,6 +150,31 @@ void emu_handle_events(Emulator* emu)
             break;
 
         case SDL_KEYUP:
+            switch (event.key.keysym.sym) {
+            case SDLK_1: emu->chip8.keypad[0x1] = false; break;
+            case SDLK_2: emu->chip8.keypad[0x2] = false; break;
+            case SDLK_3: emu->chip8.keypad[0x3] = false; break;
+            case SDLK_4: emu->chip8.keypad[0xC] = false; break;
+
+            case SDLK_q: emu->chip8.keypad[0x4] = false; break;
+            case SDLK_w: emu->chip8.keypad[0x5] = false; break;
+            case SDLK_e: emu->chip8.keypad[0x6] = false; break;
+            case SDLK_r: emu->chip8.keypad[0xD] = false; break;
+
+            case SDLK_a: emu->chip8.keypad[0x7] = false; break;
+            case SDLK_s: emu->chip8.keypad[0x8] = false; break;
+            case SDLK_d: emu->chip8.keypad[0x9] = false; break;
+            case SDLK_f: emu->chip8.keypad[0xE] = false; break;
+
+            case SDLK_z: emu->chip8.keypad[0xA] = false; break;
+            case SDLK_x: emu->chip8.keypad[0x0] = false; break;
+            case SDLK_c: emu->chip8.keypad[0xB] = false; break;
+            case SDLK_v: emu->chip8.keypad[0xF] = false; break;
+
+            default:
+                break;
+            }
+
             break;
 
         default:
