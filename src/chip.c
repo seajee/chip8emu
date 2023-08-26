@@ -127,38 +127,55 @@ void print_debug_info(Chip8* chip8)
             break;
 
         case 0x1:
-            // 0x8XY1: Sets VX to VX or VY (bitwise)
+            // 0x8XY1: Set VX to VX or VY (bitwise)
             printf("Set V%X (0x%02X) to V%X or V%X (0x%02X) (bitwise)\n",
                 chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
         case 0x2:
-            // 0x8XY2: Sets VX to VX and VY (bitwise)
+            // 0x8XY2: Set VX to VX and VY (bitwise)
             printf("Set V%X (0x%02X) to V%X and V%X (0x%02X) (bitwise)\n",
                 chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
         case 0x3:
-            // 0x8XY3: Sets VX to VX xor VY
+            // 0x8XY3: Set VX to VX xor VY
             printf("Set V%X (0x%02X) to V%X xor V%X (0x%02X)\n",
                 chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
         case 0x4:
-            // 0x8XY4: Add VY to VX, set Carry flag
-            printf("Add V%X (0x%02X) to V%X (0x%02X), set Carry flag\n",
+            // 0x8XY4: Add VY to VX, set VF
+            printf("Add V%X (0x%02X) to V%X (0x%02X), set VF flag\n",
                 chip8->inst.X, chip8->V[chip8->inst.X],
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
         case 0x5:
-            // 0x8XY5: VY is subtracted from VX, set Carry flag
-            printf("V%X (0x%02X) is subtracted from V%X (0x%02X), set Carry flag\n",
+            // 0x8XY5: VY is subtracted from VX, set VF
+            printf("V%X (0x%02X) is subtracted from V%X (0x%02X), set VF flag\n",
                 chip8->inst.X, chip8->V[chip8->inst.Y],
                 chip8->inst.Y, chip8->V[chip8->inst.X]);
+            break;
+
+        case 0x6:
+            // 0x8XY6: Stores the least significant bit of VX in VF
+            //   and then shifts VX to the right by 1
+            printf("Shift V%X to the right by 1, set VF flag\n", chip8->inst.X);
+            break;
+
+        case 0x7:
+            // 0x8XY7: Set VX to VY minus VX, set VF
+            printf("Set V%X to V%X () minus V%X, set VF\n", chip8->inst.X, chip8->inst.Y, chip8->inst.X);
+            break;
+
+        case 0xE:
+            // 0x8XYE: Stores the most significant bit of VX in VF
+            //  and then shifts VX to the left by 1
+            printf("Shift V%X to the left by 1, set VF flag\n", chip8->inst.X);
             break;
 
         default:
@@ -170,7 +187,7 @@ void print_debug_info(Chip8* chip8)
 
     case 0x0A:
         // 0xANNN: Set I to the address NNN
-        printf("Sets I to NNN (0x%04X)\n", chip8->inst.NNN);
+        printf("Set I to NNN (0x%04X)\n", chip8->inst.NNN);
         break;
 
     case 0x0D:
@@ -285,22 +302,22 @@ void chip8_execute(Chip8* chip8)
             break;
 
         case 0x1:
-            // 0x8XY1: Sets VX to VX or VY (bitwise)
+            // 0x8XY1: Set VX to VX or VY (bitwise)
             chip8->V[chip8->inst.X] |= chip8->V[chip8->inst.Y];
             break;
 
         case 0x2:
-            // 0x8XY2: Sets VX to VX and VY (bitwise)
+            // 0x8XY2: Set VX to VX and VY (bitwise)
             chip8->V[chip8->inst.X] &= chip8->V[chip8->inst.Y];
             break;
 
         case 0x3:
-            // 0x8XY3: Sets VX to VX xor VY
+            // 0x8XY3: Set VX to VX xor VY
             chip8->V[chip8->inst.X] ^= chip8->V[chip8->inst.Y];
             break;
 
         case 0x4:
-            // 0x8XY4: Add VY to VX, set Carry flag
+            // 0x8XY4: Add VY to VX, set VF
             if ((uint16_t)(chip8->V[chip8->inst.X] + chip8->V[chip8->inst.Y]) > 255) {
                 chip8->V[0xF] = 1;
             }
@@ -308,11 +325,33 @@ void chip8_execute(Chip8* chip8)
             break;
 
         case 0x5:
-            // 0x8XY5: VY is subtracted from VX, set Carry flag
-            if (chip8->V[chip8->inst.Y] > chip8->V[chip8->inst.X]) {
+            // 0x8XY5: VY is subtracted from VX, set VF
+            if (chip8->V[chip8->inst.Y] <= chip8->V[chip8->inst.X]) {
                 chip8->V[0xF] = 1;
             }
             chip8->V[chip8->inst.X] -= chip8->V[chip8->inst.Y];
+            break;
+
+        case 0x6:
+            // 0x8XY6: Stores the least significant bit of VX in VF
+            //   and then shifts VX to the right by 1
+            chip8->V[0xF] = chip8->V[chip8->inst.X] & 1;
+            chip8->V[chip8->inst.X] >>= 1;
+            break;
+
+        case 0x7:
+            // 0x8XY7: Set VX to VY minus VX, set VF
+            if (chip8->V[chip8->inst.X] <= chip8->V[chip8->inst.Y]) {
+                chip8->V[0xF] = 1;
+            }
+            chip8->V[chip8->inst.X] = chip8->V[chip8->inst.Y] - chip8->V[chip8->inst.X];
+            break;
+
+        case 0xE:
+            // 0x8XYE: Stores the most significant bit of VX in VF
+            //  and then shifts VX to the left by 1
+            chip8->V[0xF] = (chip8->V[chip8->inst.X] & 0x80) >> 7;
+            chip8->V[chip8->inst.X] <<= 1;
             break;
 
         default:
