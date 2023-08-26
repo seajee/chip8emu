@@ -88,8 +88,8 @@ void print_debug_info(Chip8* chip8)
 
     case 0x03:
         // 0x3XNN: Skip the next instruction if VX equals NN
-        printf("Skip the next instruction if V%X equals NN (0x%02X)\n",
-            chip8->inst.X, chip8->inst.NN);
+        printf("Skip the next instruction if V%X (0x%02X) equals NN (0x%02X)\n",
+            chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.NN);
         break;
 
     case 0x04:
