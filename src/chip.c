@@ -1,6 +1,8 @@
 #include "chip.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string.h>
 
 #include "font.h"
@@ -9,6 +11,9 @@ bool chip8_init(Chip8* chip8, const char* rom_path)
 {
     // Initialize entire CHIP-8 machine
     memset(chip8, 0, sizeof(Chip8));
+
+    // Set the seed for RNG
+    srand(time(NULL));
 
     // Set CHIP-8 machine defaults
     chip8->PC = CHIP_ENTRY_POINT;
@@ -204,6 +209,13 @@ void print_debug_info(Chip8* chip8)
         printf("Jump to the address NNN (0x%04X) plus V0 (0x%02X)\n", chip8->inst.NNN, chip8->V[0]);
         break;
 
+    case 0x0C:
+        // 0xCXNN: Set VX to the result of a bitwise and operation
+        //  on a random number and NN
+        printf("Set V%X to the result of a bitwise and"
+            "operation on a random number and NN (0x02%X)\n", chip8->inst.X, chip8->inst.NN);
+        break;
+
     case 0x0D:
         // 0xDXYN: Draw a sprite at coordinate (VX, VY)
         //  Read from memory location I.
@@ -389,6 +401,12 @@ void chip8_execute(Chip8* chip8)
     case 0x0B:
         // 0xBNNN: Jump to the address NNN plus V0
         chip8->PC = chip8->inst.NNN + chip8->V[0];
+        break;
+
+    case 0x0C:
+        // 0xCXNN: Set VX to the result of a bitwise and operation
+        //  on a random number and NN
+        chip8->V[chip8->inst.X] = (rand() % 256) & chip8->inst.NN;
         break;
 
     case 0x0D:
