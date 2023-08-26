@@ -66,6 +66,9 @@ void print_debug_info(Chip8* chip8)
             break;
         
         default:
+            // Not implemented
+            //   or 0x0NNN: Calls machine code routine at address NNN
+            break;
             printf("Not implemented\n");
             break;
         }
@@ -80,7 +83,13 @@ void print_debug_info(Chip8* chip8)
         // 0x2NNN: Call subroutine at NNN
         // Push PC in the stack and set PC
         //   to the jump address
-        printf("Call subroutine\n");
+        printf("Call subroutine at NNN (0x%04X)\n", chip8->inst.NNN);
+        break;
+
+    case 0x03:
+        // 0x3XNN: Skip the next instruction if VX equals NN
+        printf("Skip the next instruction if V%X equals NN (0x%02X)\n",
+            chip8->X, chip8->inst.NN);
         break;
 
     case 0x06:
@@ -90,7 +99,8 @@ void print_debug_info(Chip8* chip8)
 
     case 0x07:
         // 0x7XNN: Adds NN to VX (carry flag is not changed)
-        printf("Adds NN (0x%02X) to V%X (0x%02X)\n", chip8->inst.NN, chip8->inst.X, chip8->V[chip8->inst.X]);
+        printf("Adds NN (0x%02X) to V%X (0x%02X)\n",
+            chip8->inst.NN, chip8->inst.X, chip8->V[chip8->inst.X]);
         break;
 
     case 0x0A:
@@ -104,7 +114,9 @@ void print_debug_info(Chip8* chip8)
         //  VF (Carry flag) is set if any screen pixels are set off
         printf("Draw N (%u) height sprite at coords "
             "V%X (0x%02X), V%X (0x%02X) from memory location I (0x%04X)\n",
-            chip8->inst.N, chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.Y, chip8->V[chip8->inst.Y], chip8->I);
+            chip8->inst.N,
+            chip8->inst.X, chip8->V[chip8->inst.X],
+            chip8->inst.Y, chip8->V[chip8->inst.Y], chip8->I);
         break;
 
     default:
@@ -148,6 +160,11 @@ void chip8_execute(Chip8* chip8)
             //  and set PC to it
             chip8->PC = *--chip8->stack_ptr;
             break;
+        
+        default:
+            // Not implemented
+            //   or 0x0NNN: Calls machine code routine at address NNN
+            break;
         }
         break;
 
@@ -162,6 +179,13 @@ void chip8_execute(Chip8* chip8)
         //   to the jump address
         *chip8->stack_ptr++ = chip8->PC;
         chip8->PC = chip8->inst.NNN;
+        break;
+
+    case 0x03:
+        // 0x3XNN: Skip the next instruction if VX equals NN
+        if (chip8->V[chip8->inst.X] == chip8->inst.NN) {
+            chip8->PC += 2;
+        }
         break;
     
     case 0x06:
