@@ -98,6 +98,12 @@ void print_debug_info(Chip8* chip8)
             chip8->inst.X, chip8->inst.NN);
         break;
 
+    case 0x05:
+        // 0x5XY0: Skip the next instruction if VX equals VY
+        printf("Skip the next instruction if V%X equals V%X\n",
+            chip8->inst.X, chip8->inst.Y);
+        break;
+
     case 0x06:
         // 0x6XNN: Set VX to NN
         printf("Set V%X to NN (0x%02X)\n", chip8->inst.X, chip8->inst.NN);
@@ -200,7 +206,14 @@ void chip8_execute(Chip8* chip8)
             chip8->PC += 2;
         }
         break;
-    
+
+    case 0x05:
+        // 0x5XY0: Skip the next instruction if VX equals VY
+        if (chip8->V[chip8->inst.X] == chip8->V[chip8->inst.Y]) {
+            chip8->PC += 2;
+        }
+        break;
+
     case 0x06:
         // 0x6XNN: Set VX to NN
         chip8->V[chip8->inst.X] = chip8->inst.NN;
