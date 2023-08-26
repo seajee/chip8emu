@@ -140,6 +140,13 @@ void print_debug_info(Chip8* chip8)
                 chip8->inst.Y, chip8->V[chip8->inst.Y]);
             break;
 
+        case 0x3:
+            // 0x8XY3: Sets VX to VX xor VY
+            printf("Set V%X (0x%02X) to V%X xor V%X (0x%02X)\n",
+                chip8->inst.X, chip8->V[chip8->inst.X], chip8->inst.X,
+                chip8->inst.Y, chip8->V[chip8->inst.Y]);
+            break;
+
         default:
             // Not implemented or bad opcode
             printf("Not implemented or bad opcode\n");
@@ -271,6 +278,11 @@ void chip8_execute(Chip8* chip8)
         case 0x2:
             // 0x8XY2: Sets VX to VX and VY (bitwise)
             chip8->V[chip8->inst.X] &= chip8->V[chip8->inst.Y];
+            break;
+
+        case 0x3:
+            // 0x8XY3: Sets VX to VX xor VY
+            chip8->V[chip8->inst.X] ^= chip8->V[chip8->inst.Y];
             break;
 
         default:
