@@ -316,7 +316,7 @@ void print_debug_info(Chip8* chip8)
 }
 #endif
 
-void chip8_execute(Chip8* chip8)
+void chip8_tick(Chip8* chip8)
 {
     // Get next opcode from RAM
     chip8->inst.opcode = (chip8->ram[chip8->PC] << 8) | (chip8->ram[chip8->PC + 1]);

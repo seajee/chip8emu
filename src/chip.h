@@ -15,6 +15,8 @@
 #define CHIP_ENTRY_POINT 0x200
 #define MAX_ROM_SIZE RAM_CAPACITY - CHIP_ENTRY_POINT
 
+#define CHIP_INST_PER_SECOND 500 // MHz (CHIP-8 "clock rate")
+
 typedef struct Instruction
 {
     uint16_t opcode;
@@ -45,7 +47,7 @@ typedef struct Chip8
 } Chip8;
 
 bool chip8_init(Chip8* chip8, const char* rom_path);
-void chip8_execute(Chip8* chip8);
+void chip8_tick(Chip8* chip8);
 
 #endif // _CHIP_H_
 

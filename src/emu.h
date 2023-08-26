@@ -8,6 +8,8 @@
 
 #define WINDOW_SCALE 15
 
+#define FPS 60
+
 typedef enum EmulatorState
 {
     STATE_RUNNING = 0,
