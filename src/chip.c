@@ -157,8 +157,8 @@ void print_debug_info(Chip8* chip8)
         case 0x5:
             // 0x8XY5: VY is subtracted from VX, set VF
             printf("V%X (0x%02X) is subtracted from V%X (0x%02X), set VF flag\n",
-                chip8->inst.X, chip8->V[chip8->inst.Y],
-                chip8->inst.Y, chip8->V[chip8->inst.X]);
+                chip8->inst.Y, chip8->V[chip8->inst.Y],
+                chip8->inst.X, chip8->V[chip8->inst.X]);
             break;
 
         case 0x6:
@@ -169,7 +169,9 @@ void print_debug_info(Chip8* chip8)
 
         case 0x7:
             // 0x8XY7: Set VX to VY minus VX, set VF
-            printf("Set V%X to V%X () minus V%X, set VF\n", chip8->inst.X, chip8->inst.Y, chip8->inst.X);
+            printf("Set V%X to V%X (%02X) minus V%X (%02X), set VF\n",
+                chip8->inst.X, chip8->inst.Y, chip8->V[chip8->inst.Y],
+                chip8->inst.X, chip8->V[chip8->inst.X]);
             break;
 
         case 0xE:
@@ -183,6 +185,13 @@ void print_debug_info(Chip8* chip8)
             printf("Not implemented or bad opcode\n");
             break;
         }
+        break;
+
+    case 0x09:
+        // 0x9XY0: Skips the next instruction if VX does not equal VY
+        printf("Skips the next instruction if V%X (%02X) does not equal V%X (%02X)\n",
+            chip8->inst.X, chip8->V[chip8->inst.X],
+            chip8->inst.Y, chip8->V[chip8->inst.Y]);
         break;
 
     case 0x0A:
@@ -357,6 +366,13 @@ void chip8_execute(Chip8* chip8)
         default:
             // Not implemented or bad opcode
             break;
+        }
+        break;
+
+    case 0x09:
+        // 0x9XY0: Skips the next instruction if VX does not equal VY
+        if (chip8->V[chip8->inst.X] != chip8->V[chip8->inst.Y]) {
+            chip8->PC += 2;
         }
         break;
 
