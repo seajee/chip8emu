@@ -16,7 +16,7 @@ make
 Emulator Keybinds
 -----------------------
 QUIT           | Escape
-PAUSE / RESUME | Scape
+PAUSE / RESUME | Space
 Reset          | Return
 ```
 
