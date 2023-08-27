@@ -83,7 +83,7 @@ void print_debug_info(Chip8* chip8)
         // 0x1NNN: Jump to address NNN
         printf("Jump to address NNN (0x%04X)\n", chip8->inst.NNN);
         break;
-    
+
     case 0x02:
         // 0x2NNN: Call subroutine at NNN
         // Push PC in the stack and set PC
@@ -234,13 +234,13 @@ void print_debug_info(Chip8* chip8)
             printf("Skip the next instruction if the key stored in V%X (0x%02X) is pressed\n",
                 chip8->inst.X, chip8->V[chip8->inst.X]);
             break;
-        
+
         case 0xA1:
             // 0xEXA1: Skips the next instruction if the key stored in VX is not pressed
             printf("Skip the next instruction if the key stored in V%X (0x%02X) is not pressed\n",
                 chip8->inst.X, chip8->V[chip8->inst.X]);
             break;
-        
+
         default:
             printf("Not implemented or invalid opcode\n");
             break; // Not implemented or invalid opcode
@@ -352,7 +352,7 @@ void chip8_execute(Chip8* chip8)
             //  and set PC to it
             chip8->PC = *--chip8->stack_ptr;
             break;
-        
+
         default:
             // Not implemented
             //   or 0x0NNN: Calls machine code routine at address NNN
@@ -364,7 +364,7 @@ void chip8_execute(Chip8* chip8)
         // 0x1NNN: Jump to address NNN
         chip8->PC = chip8->inst.NNN;
         break;
-    
+
     case 0x02:
         // 0x2NNN: Call subroutine at NNN
         // Push PC in the stack and set PC
@@ -554,7 +554,7 @@ void chip8_execute(Chip8* chip8)
                 chip8->PC += 2;
             }
             break;
-        
+
         default:
             break; // Not implemented or invalid opcode
         }
