@@ -333,6 +333,8 @@ void chip8_execute(Chip8* chip8)
     chip8->inst.X = (chip8->inst.opcode >> 8) & 0x0F;
     chip8->inst.Y = (chip8->inst.opcode >> 4) & 0x0F;
 
+    uint8_t flag = 0; // VF / Carry flag
+
 #ifdef DEBUG
     print_debug_info(chip8);
 #endif
@@ -428,17 +430,18 @@ void chip8_execute(Chip8* chip8)
 
         case 0x4:
             // 0x8XY4: Add VY to VX, set VF
-            if ((uint16_t)(chip8->V[chip8->inst.X] + chip8->V[chip8->inst.Y]) > 255) {
-                chip8->V[0xF] = 1;
-            }
+            flag = ((uint16_t)(chip8->V[chip8->inst.X] + chip8->V[chip8->inst.Y]) > 255);
+
             chip8->V[chip8->inst.X] += chip8->V[chip8->inst.Y];
+            chip8->V[0xF] = flag;
             break;
 
         case 0x5:
             // 0x8XY5: VY is subtracted from VX, set VF
-            chip8->V[0xF] = chip8->V[chip8->inst.Y] <= chip8->V[chip8->inst.X];
+            flag = (chip8->V[chip8->inst.Y] <= chip8->V[chip8->inst.X]);
 
             chip8->V[chip8->inst.X] -= chip8->V[chip8->inst.Y];
+            chip8->V[0xF] = flag;
             break;
 
         case 0x6:
@@ -448,15 +451,18 @@ void chip8_execute(Chip8* chip8)
             // CHIP-8 shifs the value in the register VY and stores the result in VX.
             //   The CHIP-48 and SCHIP implementations instead ignored VY, and simply shifted VX
             // TODO: Make this configurable
-            chip8->V[0xF] = chip8->V[chip8->inst.X] & 1;
+            flag = chip8->V[chip8->inst.X] & 1;
+
             chip8->V[chip8->inst.X] >>= 1;
+            chip8->V[0xF] = flag;
             break;
 
         case 0x7:
             // 0x8XY7: Set VX to VY minus VX, set VF
-            chip8->V[0xF] = chip8->V[chip8->inst.X] <= chip8->V[chip8->inst.Y];
+            flag = (chip8->V[chip8->inst.X] <= chip8->V[chip8->inst.Y]);
 
             chip8->V[chip8->inst.X] = chip8->V[chip8->inst.Y] - chip8->V[chip8->inst.X];
+            chip8->V[0xF] = flag;
             break;
 
         case 0xE:
@@ -466,8 +472,10 @@ void chip8_execute(Chip8* chip8)
             // CHIP-8 shifs the value in the register VY and stores the result in VX.
             //   The CHIP-48 and SCHIP implementations instead ignored VY, and simply shifted VX
             // TODO: Make this configurable
-            chip8->V[0xF] = (chip8->V[chip8->inst.X] & 0x80) >> 7;
+            flag = (chip8->V[chip8->inst.X] & 0x80) >> 7;
+
             chip8->V[chip8->inst.X] <<= 1;
+            chip8->V[0xF] = flag;
             break;
 
         default:
