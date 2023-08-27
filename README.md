@@ -14,7 +14,7 @@ make
 ## Controls
 ```
 Emulator Keybinds
---------------------
+-----------------------
 QUIT           | Escape
 PAUSE / RESUME | Scape
 Reset          | Return
