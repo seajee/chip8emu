@@ -580,18 +580,28 @@ void chip8_execute(Chip8* chip8)
 
         case 0x0A:
             // 0xFX0A: A key press is awaited, and then stored in VX (blocking operation)
-            bool key_pressed = false;
-            for (uint8_t i = 0; i < sizeof(chip8->keypad); ++i) {
+            static bool key_pressed = false;
+            static uint8_t key = 0xFF;
+            for (uint8_t i = 0; key == 0xFF && i < sizeof(chip8->keypad); ++i) {
                 if (chip8->keypad[i]) {
-                    chip8->V[chip8->inst.X] = i;
+                    key = i;
                     key_pressed = true;
                     break;
                 }
             }
 
-            // Keep running this instruction until a key is pressed
             if (!key_pressed) {
+                // Keep running this instruction until a key is pressed
                 chip8->PC -= 2;
+            } else {
+                // A key is pressed, wait until the key is released
+                if (chip8->keypad[key]) {
+                    chip8->PC -= 2;
+                } else {
+                    chip8->V[chip8->inst.X] = key;
+                    key = 0xFF;
+                    key_pressed = false;
+                }
             }
             break;
 
