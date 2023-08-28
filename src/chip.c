@@ -416,16 +416,19 @@ void chip8_execute(Chip8* chip8)
         case 0x1:
             // 0x8XY1: Set VX to VX or VY (bitwise)
             chip8->V[chip8->inst.X] |= chip8->V[chip8->inst.Y];
+            chip8->V[0xF] = 0; // TODO: This is only for the CHIP-8
             break;
 
         case 0x2:
             // 0x8XY2: Set VX to VX and VY (bitwise)
             chip8->V[chip8->inst.X] &= chip8->V[chip8->inst.Y];
+            chip8->V[0xF] = 0; // TODO: This is only for the CHIP-8
             break;
 
         case 0x3:
             // 0x8XY3: Set VX to VX xor VY
             chip8->V[chip8->inst.X] ^= chip8->V[chip8->inst.Y];
+            chip8->V[0xF] = 0; // TODO: This is only for the CHIP-8
             break;
 
         case 0x4:
