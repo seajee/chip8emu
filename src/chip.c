@@ -637,7 +637,8 @@ void chip8_execute(Chip8* chip8)
             //   CHIP-8 increments I, SCHIP does not
             // TODO: Make this configurable
             for (uint8_t i = 0; i <= chip8->inst.X; ++i) {
-                chip8->ram[chip8->I + i] = chip8->V[i];
+                chip8->ram[chip8->I] = chip8->V[i];
+                chip8->I++;
             }
             break;
 
@@ -646,7 +647,8 @@ void chip8_execute(Chip8* chip8)
             //   CHIP-8 increments I, SCHIP does not
             // TODO: Make this configurable
             for (uint8_t i = 0; i <= chip8->inst.X; ++i) {
-                chip8->V[i] = chip8->ram[chip8->I + i];
+                chip8->V[i] = chip8->ram[chip8->I];
+                chip8->I++;
             }
             break;
 
