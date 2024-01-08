@@ -15,7 +15,7 @@
 #define CHIP_ENTRY_POINT 0x200
 #define MAX_ROM_SIZE RAM_CAPACITY - CHIP_ENTRY_POINT
 
-#define CHIP_INST_PER_SECOND 500 // MHz (CHIP-8 "clock rate")
+#define CHIP_INST_PER_SECOND 500 // Hz (CHIP-8 "clock rate")
 
 typedef struct Instruction
 {
